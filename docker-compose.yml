@@ -5,7 +5,7 @@ services:
   steam-headless:
     build:
       context: .
-      dockerfile: Dockerfile-ubuntu-kde
+      dockerfile: Dockerfile-ubuntu-xfce4
     image: xfce4-headless:ubuntu
     restart: unless-stopped
     shm_size: ${SHM_SIZE}
