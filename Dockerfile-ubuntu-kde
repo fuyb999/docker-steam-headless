@@ -504,69 +504,6 @@ ENV QT_IM_MODULE=fcitx5
 #ENV XIM=fcitx5
 ENV XMODIFIERS="@im=fcitx5"
 
-# Install desktop environment
-# TODO: Specify all needed packages and add '--no-install-recommends'
-#RUN \
-#    echo "**** Update apt database ****" \
-#        && apt-get update \
-#    && \
-#    echo "**** Install desktop requirements ****" \
-#        && apt-get install -y --no-install-recommends \
-#            libdbus-1-3 \
-#            libegl1 \
-#            libgtk-3-0 \
-#            libgtk2.0-0 \
-#            libsdl2-2.0-0 \
-#    && \
-#    echo "**** Install desktop environment ****" \
-#        && apt-get install -y \
-#            fonts-vlgothic \
-#            gedit \
-#            imagemagick \
-#            msttcorefonts \
-#            xdg-utils \
-#            xterm \
-#            xfce4 \
-#            xfce4-terminal \
-#        # Delete these as they are not needed at all
-#        && rm -f \
-#            /usr/share/applications/software-properties-drivers.desktop \
-#            /usr/share/applications/xfce4-about.desktop \
-#            /usr/share/applications/xfce4-session-logout.desktop \
-#        # Hide these apps. They can be displayed if a user really wants them.
-#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/xfce4-accessibility-settings.desktop \
-#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/xfce4-color-settings.desktop \
-#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/xfce4-mail-reader.desktop \
-#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/xfce4-web-browser.desktop \
-#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/vim.desktop \
-#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/thunar-settings.desktop \
-#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/thunar.desktop \
-#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/pavucontrol.desktop \
-#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/x11vnc.desktop \
-#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/display-im6.q16.desktop \
-#        # These are named specifically for Debain
-#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/debian-xterm.desktop \
-#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/debian-uxterm.desktop \
-#        # Force these apps to be "System" Apps rather than "Categories=System;Utility;Core;GTK;Filesystem;"
-#        && sed -i 's/^Categories=.*$/Categories=System;/' /usr/share/applications/xfce4-appfinder.desktop \
-#        && sed -i 's/^Categories=.*$/Categories=System;/' /usr/share/applications/thunar-bulk-rename.desktop \
-#        && sed -i 's/^Categories=.*$/Categories=System;/' /usr/share/applications/org.gnome.gedit.desktop \
-#    && \
-#    echo "**** Install WoL Manager requirements ****" \
-#        && apt-get install -y \
-#            tcpdump \
-#            xprintidle \
-#    && \
-#    echo "**** Section cleanup ****" \
-#        && apt-get clean autoclean -y \
-#        && apt-get autoremove -y \
-#        && rm -rf \
-#            /var/lib/apt/lists/* \
-#            /var/tmp/* \
-#            /tmp/* \
-#    && \
-#    echo
-
 # Add support for flatpaks
 #ENV \
 #    XDG_DATA_DIRS="/home/default/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share/:/usr/share/"
