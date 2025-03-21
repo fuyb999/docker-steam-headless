@@ -3,7 +3,7 @@
 echo "**** Installing/upgrading ProtonUp-Qt via flatpak ****"
 
 # Install ProtonUp-Qt
-flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo 
+flatpak --user remote-add --if-not-exists flathub https://mirror.sjtu.edu.cn/flathub/flathub.flatpakrepo
 flatpak --user install --assumeyes --or-update net.davidotek.pupgui2
 
 # Configure ProtonUp-Qt
