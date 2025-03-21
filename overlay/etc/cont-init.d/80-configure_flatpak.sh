@@ -1,7 +1,5 @@
-
-print_header "Configure Flatpak"
-
-if [ "X${NVIDIA_VISIBLE_DEVICES:-}" != "X" ]; then
+if [ "${ENABLE_FLATPAK:-}" = "true" ] && [ "X${NVIDIA_VISIBLE_DEVICES:-}" != "X" ]; then
+    print_header "Configure Flatpak"
     # Fix some flatpak quirks (not sure what is happening here) for NVIDIA containers
     mount -t proc none /proc
     flatpak list

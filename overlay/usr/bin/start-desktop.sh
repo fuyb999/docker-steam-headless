@@ -33,19 +33,32 @@ export XDG_DATA_HOME="${USER_HOME:?}/.local/share"
 # EXECUTE PROCESS:
 # Wait for the X server to start
 wait_for_x
-# Install/Upgrade user apps
-if [[ ! -f /tmp/.desktop-apps-updated ]]; then
-    xterm -geometry 200x50+0+0 -ls -e /bin/bash -c "
-        source /usr/bin/install_firefox.sh;
-        source /usr/bin/install_protonup.sh;
-        sleep 1;
-    "
-    touch /tmp/.desktop-apps-updated
+
+# desktop
+if [[ "${DESKTOP}" == "xfce4" ]] ;then
+
+ # Install/Upgrade user apps
+ if [[ ! -f /tmp/.desktop-apps-updated ]]; then
+     xterm -geometry 200x50+0+0 -ls -e /bin/bash -c "
+         source /usr/bin/install_firefox.sh;
+         source /usr/bin/install_protonup.sh;
+         sleep 1;
+     "
+     touch /tmp/.desktop-apps-updated
+ fi
+
+ # Run the desktop environment
+ echo "**** Starting Xfce4 ****"
+ /usr/bin/startxfce4 &
+
+elif [[ "${DESKTOP}" == "kde" ]] ;then
+
+ # Run the desktop environment
+ echo "**** Starting KDE plasma ****"
+ /usr/bin/startplasma-x11 &
+
 fi
 
-# Run the desktop environment
-echo "**** Starting Xfce4 ****"
-/usr/bin/startxfce4 &
 desktop_pid=$!
 touch /tmp/.started-desktop
 

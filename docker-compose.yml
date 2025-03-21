@@ -5,7 +5,7 @@ services:
   steam-headless:
     build:
       context: .
-      dockerfile: Dockerfile-ubuntu
+      dockerfile: Dockerfile-ubuntu-kde
     image: xfce4-headless:ubuntu
     restart: unless-stopped
     shm_size: ${SHM_SIZE}
@@ -55,6 +55,7 @@ services:
       - PGID=${PGID}
       - UMASK=${UMASK}
       - USER_PASSWORD=${USER_PASSWORD}
+      - DESKTOP=${DESKTOP}
       # Mode
       - MODE=${MODE}
       # Web UI
@@ -62,6 +63,8 @@ services:
       - ENABLE_VNC_AUDIO=${ENABLE_VNC_AUDIO}
       - PORT_NOVNC_WEB=${PORT_NOVNC_WEB}
       - NEKO_NAT1TO1=${NEKO_NAT1TO1}
+      #
+      - ENABLE_FLATPAK=${ENABLE_FLATPAK}
       # Steam
       - ENABLE_STEAM=${ENABLE_STEAM}
       - STEAM_ARGS=${STEAM_ARGS}

@@ -1,0 +1,862 @@
+FROM ubuntu:22.04
+LABEL maintainer="Josh.5 <jsunnex@gmail.com>"
+# Update package repos
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN sed -i -E 's/(archive|security).ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
+
+# Update locale
+RUN \
+    echo "**** Update apt database ****" \
+        && apt-get update \
+    && \
+    echo "**** Install and configure locals ****" \
+        && apt-get install -y --no-install-recommends \
+            locales \
+        && echo 'zh_CN.UTF-8 UTF-8' > /etc/locale.gen \
+        && locale-gen \
+    && \
+    echo "**** Section cleanup ****" \
+        && apt-get clean autoclean -y \
+        && apt-get autoremove -y \
+        && rm -rf \
+            /var/lib/apt/lists/* \
+            /var/tmp/* \
+            /tmp/* \
+    && \
+    echo
+ENV \
+    LANG=zh_CN.UTF-8 \
+    LANGUAGE=zh_CN:zh \
+    LC_ALL=zh_CN.UTF-8
+
+# Re-install certificates
+RUN \
+    echo "**** Update apt database ****" \
+        && apt-get update \
+    && \
+    echo "**** Install certificates ****" \
+        && apt-get install -y --reinstall \
+            ca-certificates \
+    && \
+    echo "**** Section cleanup ****" \
+        && apt-get clean autoclean -y \
+        && apt-get autoremove -y \
+        && rm -rf \
+            /var/lib/apt/lists/* \
+            /var/tmp/* \
+            /tmp/* \
+    && \
+    echo
+
+# Install core packages
+RUN \
+    echo "**** Update apt database ****" \
+        && apt-get update \
+    && \
+    echo "**** Install tools ****" \
+        && apt-get install -y --no-install-recommends \
+            bash \
+            bash-completion \
+            curl \
+            git \
+            jq \
+            less \
+            man-db \
+            mlocate \
+            nano \
+            net-tools \
+            p7zip-full \
+            patch \
+            pciutils \
+            pkg-config \
+            procps \
+            psmisc \
+            psutils \
+            rsync \
+            screen \
+            sudo \
+            unzip \
+            vim \
+            wget \
+            xmlstarlet \
+            xz-utils \
+            apt-utils \
+            dbus-user-session \
+            fakeroot \
+            fuse \
+            kmod \
+            locales \
+            ssl-cert \
+            udev \
+            tzdata \
+            software-properties-common \
+            language-pack-zh-hans \
+            fonts-wqy-zenhei \
+            build-essential \
+            ca-certificates \
+            cups-browsed \
+            cups-bsd \
+            cups-common \
+            cups-filters \
+            printer-driver-cups-pdf \
+            alsa-base \
+            alsa-utils \
+            file \
+            gnupg \
+            curl \
+            wget \
+            bzip2 \
+            gzip \
+            xz-utils \
+            unar \
+            rar \
+            unrar \
+            zip \
+            unzip \
+            zstd \
+            gcc \
+            git \
+            dnsutils \
+            coturn \
+            jq \
+            python3 \
+            python3-cups \
+            python3-numpy \
+            nano \
+            vim \
+            htop \
+            fonts-dejavu \
+            fonts-freefont-ttf \
+            fonts-hack \
+            fonts-liberation \
+            fonts-noto \
+            fonts-noto-cjk \
+            fonts-noto-cjk-extra \
+            fonts-noto-color-emoji \
+            fonts-noto-extra \
+            fonts-noto-ui-extra \
+            fonts-noto-hinted \
+            fonts-noto-mono \
+            fonts-noto-unhinted \
+            fonts-opensymbol \
+            fonts-symbola \
+            fonts-ubuntu \
+            lame \
+            less \
+            libavcodec-extra \
+            libpulse0 \
+            supervisor \
+            net-tools \
+            packagekit-tools \
+            pkg-config \
+            mesa-utils \
+            mesa-va-drivers \
+            libva2 \
+            vainfo \
+            vdpau-driver-all \
+            libvdpau-va-gl1 \
+            vdpauinfo \
+            mesa-vulkan-drivers \
+            vulkan-tools \
+            radeontop \
+            libvulkan-dev \
+            ocl-icd-libopencl1 \
+            clinfo \
+            xkb-data \
+            xauth \
+            xbitmaps \
+            xdg-user-dirs \
+            xdg-utils \
+            xfonts-base \
+            xfonts-scalable \
+            xinit \
+            xsettingsd \
+            libxrandr-dev \
+            x11-xkb-utils \
+            x11-xserver-utils \
+            x11-utils \
+            x11-apps \
+            xserver-xorg-input-all \
+            xserver-xorg-input-wacom \
+            xserver-xorg-video-all \
+            xserver-xorg-video-intel \
+            xserver-xorg-video-qxl \
+            # NVIDIA driver installer dependencies
+            libc6-dev \
+            libpci3 \
+            libelf-dev \
+            libglvnd-dev \
+            # OpenGL libraries
+            libxau6 \
+            libxdmcp6 \
+            libxcb1 \
+            libxext6 \
+            libx11-6 \
+            libxv1 \
+            libxtst6 \
+            libdrm2 \
+            libegl1 \
+            libgl1 \
+            libopengl0 \
+            libgles1 \
+            libgles2 \
+            libglvnd0 \
+            libglx0 \
+            libglu1 \
+            libsm6 \
+            # NGINX web server
+            nginx \
+            apache2-utils \
+            netcat-openbsd \
+    && \
+    echo "**** Install python ****" \
+        && apt-get install -y --no-install-recommends \
+            python3 \
+            python3-numpy \
+            python3-pip \
+            python3-setuptools \
+            python3-venv \
+    && \
+    echo "**** Section cleanup ****" \
+        && apt-get clean autoclean -y \
+        && apt-get autoremove -y \
+        && rm -rf \
+            /var/lib/apt/lists/* \
+            /var/tmp/* \
+            /tmp/* \
+    && \
+    echo
+
+# Configure default user and set user env
+ENV \
+    PUID=99 \
+    PGID=100 \
+    UMASK=000 \
+    USER="default" \
+    USER_PASSWORD="password" \
+    USER_HOME="/home/default" \
+    TZ="Asia/Shanghai" \
+    USER_LOCALES="zh_CN.UTF-8 UTF-8"
+RUN \
+    echo "**** Configure default user '${USER}' ****" \
+        && mkdir -p \
+            ${USER_HOME} \
+        && useradd -d ${USER_HOME} -s /bin/bash ${USER} \
+        && chown -R ${USER} \
+            ${USER_HOME} \
+        && echo "${USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers \
+    && \
+    echo
+
+# Install supervisor
+RUN \
+    echo "**** Update apt database ****" \
+        && apt-get update \
+    && \
+    echo "**** Install supervisor ****" \
+        && apt-get install -y \
+            supervisor \
+    && \
+    echo "**** Section cleanup ****" \
+        && apt-get clean autoclean -y \
+        && apt-get autoremove -y \
+        && rm -rf \
+            /var/lib/apt/lists/* \
+            /var/tmp/* \
+            /tmp/* \
+    && \
+    echo
+
+# Install X Server requirements
+# TODO: Refine this list of packages to only what is required.
+ENV \
+    XORG_SOCKET_DIR="/tmp/.X11-unix" \
+    XDG_RUNTIME_DIR="/tmp/.X11-unix/run" \
+    XDG_SESSION_TYPE="x11" \
+    FORCE_X11_DUMMY_CONFIG="false"
+RUN \
+    echo "**** Update apt database ****" \
+        && apt-get update \
+    && \
+    echo "**** Install X Server requirements ****" \
+        && apt-get install -y --no-install-recommends \
+            avahi-utils \
+            dbus-x11 \
+            libxcomposite-dev \
+            libxcursor1 \
+            wmctrl \
+            libfuse2 \
+            x11-utils \
+            x11-xfs-utils \
+            x11-xkb-utils \
+            x11-xserver-utils \
+            x11vnc \
+            xauth \
+            xbindkeys \
+            xclip \
+            xcvt \
+            xdotool \
+            xfishtank \
+            xfonts-base \
+            xinit \
+            xorg \
+            xserver-xorg-core \
+            xserver-xorg-input-evdev \
+            xserver-xorg-input-libinput \
+            xserver-xorg-legacy \
+            xserver-xorg-video-all \
+            xserver-xorg-video-dummy \
+    && \
+    echo "**** Section cleanup ****" \
+        && apt-get clean autoclean -y \
+        && apt-get autoremove -y \
+        && rm -rf \
+            /var/lib/apt/lists/* \
+            /var/tmp/* \
+            /tmp/* \
+    && \
+    echo
+
+# Install audio requirements
+ENV \
+    PULSE_SOCKET_DIR="/tmp/pulse" \
+    PULSE_SERVER="unix:/tmp/pulse/pulse-socket"
+RUN \
+    echo "**** Update apt database ****" \
+        && apt-get update \
+    && \
+    echo "**** Install pulseaudio requirements ****" \
+        && apt-get install -y --no-install-recommends \
+            pulseaudio \
+            alsa-utils \
+            libasound2 \
+            libasound2-plugins \
+    && \
+    echo "**** Section cleanup ****" \
+        && apt-get clean autoclean -y \
+        && apt-get autoremove -y \
+        && rm -rf \
+            /var/lib/apt/lists/* \
+            /var/tmp/* \
+            /tmp/* \
+    && \
+    echo
+
+# Install KDE and other GUI packages
+RUN mkdir -pm755 /etc/apt/preferences.d && echo "Package: firefox*\n\
+Pin: version 1:1snap*\n\
+Pin-Priority: -1" > /etc/apt/preferences.d/firefox-nosnap && \
+    mkdir -pm755 /etc/apt/trusted.gpg.d && curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x738BEB9321D1AAEC13EA9391AEBDF4819BE21867" | gpg --dearmor -o /etc/apt/trusted.gpg.d/mozillateam-ubuntu-ppa.gpg && \
+    mkdir -pm755 /etc/apt/sources.list.d && echo "deb https://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu $(grep '^VERSION_CODENAME=' /etc/os-release | cut -d= -f2 | tr -d '\"') main" > "/etc/apt/sources.list.d/mozillateam-ubuntu-ppa-$(grep '^VERSION_CODENAME=' /etc/os-release | cut -d= -f2 | tr -d '\"').list" && \
+    apt-get update && apt-get install --no-install-recommends -y \
+        kde-baseapps \
+        plasma-desktop \
+        plasma-workspace \
+        language-pack-kde-zh-hans \
+        adwaita-icon-theme-full \
+        appmenu-gtk3-module \
+        ark \
+        aspell \
+        aspell-en \
+        breeze \
+        breeze-cursor-theme \
+        breeze-gtk-theme \
+        breeze-icon-theme \
+        dbus-x11 \
+        debconf-kde-helper \
+        desktop-file-utils \
+        dolphin \
+        dolphin-plugins \
+        enchant-2 \
+        filelight \
+        frameworkintegration \
+        gwenview \
+        haveged \
+        hunspell \
+        im-config \
+        kwrite \
+        kcalc \
+        kcharselect \
+        kdeadmin \
+        fcitx5 \
+        fcitx5-chinese-addons \
+        fcitx5-frontend-gtk2 \
+        fcitx5-frontend-gtk3 \
+        fcitx5-frontend-qt5 \
+        kde-config-fcitx5 \
+        kde-config-gtk-style \
+        kde-config-gtk-style-preview \
+        kdeconnect \
+        kdegraphics-thumbnailers \
+        kde-spectacle \
+        kdf \
+        kdialog \
+        kfind \
+        kget \
+        khotkeys \
+        kimageformat-plugins \
+        kinfocenter \
+        kio \
+        kio-extras \
+        kmag \
+        kmenuedit \
+        kmix \
+        kmousetool \
+        kmouth \
+        ksshaskpass \
+        ktimer \
+        kwin-addons \
+        kwin-x11 \
+        libdbusmenu-glib4 \
+        libdbusmenu-gtk3-4 \
+        libgail-common \
+        libgdk-pixbuf2.0-bin \
+        libgtk2.0-bin \
+        libgtk-3-bin \
+        libkf5baloowidgets-bin \
+        libkf5dbusaddons-bin \
+        libkf5iconthemes-bin \
+        libkf5kdelibs4support5-bin \
+        libkf5khtml-bin \
+        libkf5parts-plugins \
+        libqt5multimedia5-plugins \
+        librsvg2-common \
+        media-player-info \
+        okular \
+        okular-extra-backends \
+        plasma-browser-integration \
+        plasma-calendar-addons \
+        plasma-dataengines-addons \
+        plasma-discover \
+        plasma-integration \
+        plasma-runners-addons \
+        plasma-widgets-addons \
+        print-manager \
+        qapt-deb-installer \
+        qml-module-org-kde-runnermodel \
+        qml-module-org-kde-qqc2desktopstyle \
+        qml-module-qtgraphicaleffects \
+        qml-module-qt-labs-platform \
+        qml-module-qtquick-xmllistmodel \
+        qt5-gtk-platformtheme \
+        qt5-image-formats-plugins \
+        qt5-style-plugins \
+        qtspeech5-flite-plugin \
+        qtvirtualkeyboard-plugin \
+        software-properties-qt \
+        sonnet-plugins \
+        sweeper \
+        systemsettings \
+        ubuntu-drivers-common \
+        xdg-user-dirs \
+        xdg-utils \
+        firefox \
+        transmission-qt && \
+    # Ensure Firefox as the default web browser
+    xdg-settings set default-web-browser firefox.desktop && \
+    update-alternatives --set x-www-browser /usr/bin/firefox && \
+    # Install Google Chrome for supported architectures
+    if [ "$(dpkg --print-architecture)" = "amd64" ]; then cd /tmp && curl -o google-chrome-stable.deb -fsSL "https://dl.google.com/linux/direct/google-chrome-stable_current_$(dpkg --print-architecture).deb" && apt-get update && apt-get install --no-install-recommends -y ./google-chrome-stable.deb && rm -f google-chrome-stable.deb && sed -i '/^Exec=/ s/$/ --password-store=basic --in-process-gpu/' /usr/share/applications/google-chrome.desktop; fi && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* /var/cache/debconf/* /var/log/* /tmp/* /var/tmp/* && \
+    # Fix KDE startup permissions issues in containers
+    MULTI_ARCH=$(dpkg --print-architecture | sed -e 's/arm64/aarch64-linux-gnu/' -e 's/armhf/arm-linux-gnueabihf/' -e 's/riscv64/riscv64-linux-gnu/' -e 's/ppc64el/powerpc64le-linux-gnu/' -e 's/s390x/s390x-linux-gnu/' -e 's/i.*86/i386-linux-gnu/' -e 's/amd64/x86_64-linux-gnu/' -e 's/unknown/x86_64-linux-gnu/') && \
+    cp -f /usr/lib/${MULTI_ARCH}/libexec/kf5/start_kdeinit /tmp/ && \
+    rm -f /usr/lib/${MULTI_ARCH}/libexec/kf5/start_kdeinit && \
+    cp -f /tmp/start_kdeinit /usr/lib/${MULTI_ARCH}/libexec/kf5/start_kdeinit && \
+    rm -f /tmp/start_kdeinit && \
+    # KDE disable screen lock, double-click to open instead of single-click
+    echo "[Daemon]\n\
+Autolock=false\n\
+LockOnResume=false" > /etc/xdg/kscreenlockerrc && \
+    echo "[Compositing]\n\
+Enabled=false" > /etc/xdg/kwinrc && \
+    echo "[KDE]\n\
+SingleClick=false\n\
+\n\
+[KDE Action Restrictions]\n\
+action/lock_screen=false\n\
+logout=false\n\
+\n\
+[General]\n\
+BrowserApplication=firefox.desktop" > /etc/xdg/kdeglobals \
+    && chmod 4755 /usr/lib/x86_64-linux-gnu/libexec/polkit-kde-authentication-agent-1
+
+# KDE environment variables
+ENV DESKTOP_SESSION=plasma
+ENV XDG_SESSION_DESKTOP=KDE
+ENV XDG_CURRENT_DESKTOP=KDE
+ENV XDG_SESSION_TYPE=x11
+ENV KDE_FULL_SESSION=true
+ENV KDE_SESSION_VERSION=5
+ENV KDE_APPLICATIONS_AS_SCOPE=1
+ENV KWIN_COMPOSE=N
+ENV KWIN_EFFECTS_FORCE_ANIMATIONS=0
+ENV KWIN_EXPLICIT_SYNC=0
+ENV KWIN_X11_NO_SYNC_TO_VBLANK=1
+# Use sudoedit to change protected files instead of using sudo on kwrite
+ENV SUDO_EDITOR=kwrite
+# Enable AppImage execution in containers
+ENV APPIMAGE_EXTRACT_AND_RUN=1
+# Set input to fcitx
+ENV GTK_IM_MODULE=fcitx5
+ENV QT_IM_MODULE=fcitx5
+#ENV XIM=fcitx5
+ENV XMODIFIERS="@im=fcitx5"
+
+# Install desktop environment
+# TODO: Specify all needed packages and add '--no-install-recommends'
+#RUN \
+#    echo "**** Update apt database ****" \
+#        && apt-get update \
+#    && \
+#    echo "**** Install desktop requirements ****" \
+#        && apt-get install -y --no-install-recommends \
+#            libdbus-1-3 \
+#            libegl1 \
+#            libgtk-3-0 \
+#            libgtk2.0-0 \
+#            libsdl2-2.0-0 \
+#    && \
+#    echo "**** Install desktop environment ****" \
+#        && apt-get install -y \
+#            fonts-vlgothic \
+#            gedit \
+#            imagemagick \
+#            msttcorefonts \
+#            xdg-utils \
+#            xterm \
+#            xfce4 \
+#            xfce4-terminal \
+#        # Delete these as they are not needed at all
+#        && rm -f \
+#            /usr/share/applications/software-properties-drivers.desktop \
+#            /usr/share/applications/xfce4-about.desktop \
+#            /usr/share/applications/xfce4-session-logout.desktop \
+#        # Hide these apps. They can be displayed if a user really wants them.
+#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/xfce4-accessibility-settings.desktop \
+#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/xfce4-color-settings.desktop \
+#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/xfce4-mail-reader.desktop \
+#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/xfce4-web-browser.desktop \
+#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/vim.desktop \
+#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/thunar-settings.desktop \
+#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/thunar.desktop \
+#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/pavucontrol.desktop \
+#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/x11vnc.desktop \
+#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/display-im6.q16.desktop \
+#        # These are named specifically for Debain
+#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/debian-xterm.desktop \
+#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/debian-uxterm.desktop \
+#        # Force these apps to be "System" Apps rather than "Categories=System;Utility;Core;GTK;Filesystem;"
+#        && sed -i 's/^Categories=.*$/Categories=System;/' /usr/share/applications/xfce4-appfinder.desktop \
+#        && sed -i 's/^Categories=.*$/Categories=System;/' /usr/share/applications/thunar-bulk-rename.desktop \
+#        && sed -i 's/^Categories=.*$/Categories=System;/' /usr/share/applications/org.gnome.gedit.desktop \
+#    && \
+#    echo "**** Install WoL Manager requirements ****" \
+#        && apt-get install -y \
+#            tcpdump \
+#            xprintidle \
+#    && \
+#    echo "**** Section cleanup ****" \
+#        && apt-get clean autoclean -y \
+#        && apt-get autoremove -y \
+#        && rm -rf \
+#            /var/lib/apt/lists/* \
+#            /var/tmp/* \
+#            /tmp/* \
+#    && \
+#    echo
+
+# Add support for flatpaks
+#ENV \
+#    XDG_DATA_DIRS="/home/default/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share/:/usr/share/"
+#RUN \
+#    echo "**** Update apt database ****" \
+#        && apt-get update \
+#    && \
+#    echo "**** Install flatpak support ****" \
+#        && apt-get install -y --no-install-recommends \
+#            flatpak \
+#            gnome-software-plugin-flatpak \
+#    && \
+#    echo "**** Configure flatpak ****" \
+#        && flatpak remote-add flathub https://mirror.sjtu.edu.cn/flathub/flathub.flatpakrepo \
+#        && dpkg-statoverride --update --add root root 0755 /usr/bin/bwrap \
+#    && \
+#    echo "**** Section cleanup ****" \
+#        && apt-get clean autoclean -y \
+#        && apt-get autoremove -y \
+#        && rm -rf \
+#            /var/lib/apt/lists/* \
+#            /var/tmp/* \
+#            /tmp/* \
+#    && \
+#    echo
+
+# Setup audio streaming deps
+RUN \
+    echo "**** Update apt database ****" \
+        && apt-get update \
+    && \
+    echo "**** Install audio streaming deps ****" \
+        && apt-get install -y --no-install-recommends \
+            bzip2 \
+            gstreamer1.0-alsa \
+            gstreamer1.0-gl \
+            gstreamer1.0-gtk3 \
+            gstreamer1.0-libav \
+            gstreamer1.0-plugins-bad \
+            gstreamer1.0-plugins-base \
+            gstreamer1.0-plugins-good \
+            gstreamer1.0-plugins-ugly \
+            gstreamer1.0-pulseaudio \
+            gstreamer1.0-qt5 \
+            gstreamer1.0-tools \
+            gstreamer1.0-vaapi \
+            gstreamer1.0-x \
+            libgstreamer1.0-0 \
+            libncursesw5 \
+            libopenal1 \
+            libsdl-image1.2 \
+            libsdl-ttf2.0-0 \
+            libsdl1.2debian \
+            libsndfile1 \
+            ucspi-tcp \
+    && \
+    echo "**** Section cleanup ****" \
+        && apt-get clean autoclean -y \
+        && apt-get autoremove -y \
+        && rm -rf \
+            /var/lib/apt/lists/* \
+            /var/tmp/* \
+            /tmp/* \
+    && \
+    echo
+
+# Setup video streaming deps
+RUN \
+    echo "**** Update apt database ****" \
+        && apt-get update \
+    && \
+    echo "**** Install Intel media drivers and VAAPI ****" \
+        && apt-get install -y --no-install-recommends \
+            intel-media-va-driver-non-free \
+            i965-va-driver-shaders \
+            libva2 \
+    && \
+    echo "**** Section cleanup ****" \
+        && apt-get clean autoclean -y \
+        && apt-get autoremove -y \
+        && rm -rf \
+            /var/lib/apt/lists/* \
+            /var/tmp/* \
+            /tmp/* \
+    && \
+    echo
+
+# Install tools for monitoring hardware
+RUN \
+    echo "**** Update apt database ****" \
+        && apt-get update \
+    && \
+    echo "**** Install useful HW monitoring tools ****" \
+        && apt-get install -y --no-install-recommends \
+            cpu-x \
+            htop \
+            vainfo \
+            vdpauinfo \
+    && \
+    echo "**** Section cleanup ****" \
+        && apt-get clean autoclean -y \
+        && apt-get autoremove -y \
+        && rm -rf \
+            /var/lib/apt/lists/* \
+            /var/tmp/* \
+            /tmp/* \
+    && \
+    echo
+
+# Install Sunshine
+COPY --from=lizardbyte/sunshine:v2025.122.141614-ubuntu-22.04 /sunshine.deb /usr/src/sunshine.deb
+RUN \
+    echo "**** Update apt database ****" \
+        && apt-get update \
+    && \
+    echo "**** Install Sunshine requirements ****" \
+        && apt-get install -y \
+            va-driver-all \
+    && \
+    echo "**** Install Sunshine ****" \
+        && apt-get install -y \
+            /usr/src/sunshine.deb \
+    && \
+    echo "**** Section cleanup ****" \
+        && apt-get clean autoclean -y \
+        && apt-get autoremove -y \
+        && rm -rf \
+            /var/lib/apt/lists/* \
+            /var/tmp/* \
+            /tmp/* \
+    && \
+    echo
+
+# Install Steam
+RUN \
+    echo "**** Update apt database ****" \
+        && dpkg --add-architecture i386 \
+        && apt-get update \
+    && \
+    echo "**** Install gamescope ****" \
+#      && wget -qO gamescope_3.12.5-2_amd64.deb https://github.com/akdor1154/gamescope-pkg/releases/download/v3.12.5-2/gamescope_3.12.5-2_amd64.deb \
+    && \
+    echo "**** Install Steam ****" \
+        && apt-get install -y --no-install-recommends \
+            steam-installer \
+        && ln -sf /usr/games/steam /usr/bin/steam \
+    && \
+    echo "**** Section cleanup ****" \
+        && apt-get clean autoclean -y \
+        && apt-get autoremove -y \
+        && rm -rf \
+            /var/lib/apt/lists/* \
+            /var/tmp/* \
+            /tmp/* \
+    && \
+    echo
+
+# Various other tools
+ARG DUMB_INIT_VERSION=1.2.5
+ARG DUMB_UDEV_VERSION=64d1427
+RUN \
+    echo "**** Install dumb-init ****" \
+        && wget --no-check-certificate --no-cookies --quiet \
+            -O /usr/bin/dumb-init \
+            https://github.com/Yelp/dumb-init/releases/download/v${DUMB_INIT_VERSION}/dumb-init_${DUMB_INIT_VERSION}_x86_64 \
+        && chmod +x /usr/bin/dumb-init \
+    && \
+    echo "**** Install dumb-udev ****" \
+        && python3 -m pip install \
+            --pre \
+            --upgrade \
+            --no-cache-dir \
+            git+https://github.com/Steam-Headless/dumb-udev.git@${DUMB_UDEV_VERSION} \
+    && \
+    echo
+
+# TODO: Deprecate neko
+# Install Neko server
+COPY --from=m1k1o/neko:base /usr/bin/neko /usr/bin/neko
+COPY --from=m1k1o/neko:base /var/www /var/www
+
+# Install Web Frontend
+ARG NODE_VERSION="v20"
+ARG FRONTEND_VERSION=a8eb92f
+RUN \
+    echo "**** Install Node ${NODE_VERSION} ****" \
+        && mkdir -p /tmp/nodejs \
+        && rm -rf /opt/nodejs \
+        && wget -qO /tmp/nodejs/nodejs.tar.xz \
+            "https://nodejs.org/dist/latest-${NODE_VERSION:?}.x/node-$(wget -qO- https://nodejs.org/dist/latest-${NODE_VERSION:?}.x/ | sed -nE 's|.*>node-(.*)-linux-x64\.tar.xz</a>.*|\1|p')-linux-x64.tar.xz" \
+        && tar -xJf /tmp/nodejs/nodejs.tar.xz -C /tmp/nodejs --strip-components=1 \
+        && mv /tmp/nodejs /opt/nodejs \
+        && ln -sf /opt/nodejs/bin/node /usr/local/bin/node \
+        && ln -sf /opt/nodejs/bin/npm /usr/local/bin/npm \
+        && ln -sf /opt/nodejs/bin/npx /usr/local/bin/npx \
+    && \
+    echo "**** Fetch Web Frontend ****" \
+        && mkdir -p /opt \
+        && cd /opt \
+        && rm -rf /opt/frontend \
+        && git clone https://github.com/Steam-Headless/frontend.git --branch master /opt/frontend \
+        && cd /opt/frontend \
+        && git checkout ${FRONTEND_VERSION} 2> /dev/null \
+        && git submodule init \
+        && git submodule update --depth 1 --recursive \
+        && rm -rf /opt/frontend/.git \
+    && \
+    echo "**** Configure Web Frontend ****" \
+        && echo '<!DOCTYPE html>' > /opt/frontend/index.html \
+        && echo '<html><head><meta http-equiv="refresh" content="0;url=./web/"></head><body><p>If you are not redirected, <a href="./web/">click here</a>.</p></body></html>' >> /opt/frontend/index.html \
+        && chmod -R 755 /opt/frontend \
+#        && convert /opt/frontend/web/images/icons/novnc-ios-180.png -resize "128x128" /tmp/steam-headless.png \
+#        && xdg-icon-resource install --novendor --size 128 /tmp/steam-headless.png \
+    && \
+    echo "**** Section cleanup ****" \
+        && rm -f /tmp/steam-headless.png
+
+# Install Websockify
+ARG WEBSOCKETIFY_VERSION=0.11.0
+RUN \
+    echo "**** Update apt database ****" \
+        && apt-get update \
+    && \
+    echo "**** Install Websockify dependencies ****" \
+        && apt-get install -y \
+            python3-numpy \
+            python3-requests \
+            python3-jwcrypto \
+            python3-redis \
+    && \
+    echo "**** Fetch Websockify ****" \
+        && cd /tmp \
+        && wget -O /tmp/websockify.tar.gz https://github.com/novnc/websockify/archive/v${WEBSOCKETIFY_VERSION}.tar.gz \
+    && \
+    echo "**** Extract Websockify ****" \
+        && cd /tmp \
+        && tar -xvf /tmp/websockify.tar.gz \
+    && \
+    echo "**** Install Websockify to Web Frontend path ****" \
+        && cd /tmp \
+        && mv -v /tmp/websockify-${WEBSOCKETIFY_VERSION} /opt/frontend/utils/websockify \
+    && \
+    echo "**** Section cleanup ****" \
+        && apt-get clean autoclean -y \
+        && apt-get autoremove -y \
+        && rm -rf \
+            /var/lib/apt/lists/* \
+            /tmp/websockify-* \
+            /tmp/websockify.tar.gz
+
+# Add FS overlay
+COPY overlay /
+
+# Set display environment variables
+ENV \
+    DISPLAY_CDEPTH="24" \
+    DISPLAY_REFRESH="120" \
+    DISPLAY_SIZEH="900" \
+    DISPLAY_SIZEW="1600" \
+    DISPLAY_VIDEO_PORT="DFP" \
+    DISPLAY=":55"
+ENV \
+    NVIDIA_DRIVER_CAPABILITIES="all" \
+    NVIDIA_VISIBLE_DEVICES="all"
+
+# Set container configuration environment variables
+# TODO: Set the default WEBUI_USER & WEBUI_PASS after release of SHUI
+ENV \
+    MODE="primary" \
+    WEB_UI_MODE="vnc" \
+    ENABLE_VNC_AUDIO="true" \
+    NEKO_PASSWORD=neko \
+    NEKO_PASSWORD_ADMIN=admin \
+    ENABLE_STEAM="true" \
+    STEAM_ARGS="-silent" \
+    WEBUI_USER="" \
+    WEBUI_PASS="" \
+    ENABLE_SUNSHINE="true" \
+    ENABLE_EVDEV_INPUTS="true" \
+    ENABLE_WOL_POWER_MANAGER="false" \
+    ENABLE_SID="false"
+
+# Configure required ports
+ENV \
+    PORT_NOVNC_WEB="8083" \
+    NEKO_NAT1TO1=""
+
+# Expose the required ports
+EXPOSE 8083
+
+# Set entrypoint
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
