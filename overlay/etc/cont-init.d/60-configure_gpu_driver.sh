@@ -213,22 +213,23 @@ function install_intel_gpu_driver {
 }
 
 # Intel Arc GPU or Intel CPU with possible iGPU
-if [ "${intel_gpu_model:-}X" != "X" ]; then
-    print_header "Found Intel device '${intel_gpu_model:?}'"
-    install_intel_gpu_driver
-elif [ "${intel_cpu_model:-}X" != "X" ]; then
-    print_header "Found Intel device '${intel_cpu_model:?}'"
-    install_intel_gpu_driver
-else
-    print_header "No Intel device found"
-fi
-# AMD GPU
-if [ "${amd_gpu_model:-}X" != "X" ]; then
-    print_header "Found AMD device '${amd_gpu_model:?}'"
-    install_amd_gpu_driver
-else
-    print_header "No AMD device found"
-fi
+#if [ "${intel_gpu_model:-}X" != "X" ]; then
+#    print_header "Found Intel device '${intel_gpu_model:?}'"
+#    install_intel_gpu_driver
+#elif [ "${intel_cpu_model:-}X" != "X" ]; then
+#    print_header "Found Intel device '${intel_cpu_model:?}'"
+#    install_intel_gpu_driver
+#else
+#    print_header "No Intel device found"
+#fi
+## AMD GPU
+#if [ "${amd_gpu_model:-}X" != "X" ]; then
+#    print_header "Found AMD device '${amd_gpu_model:?}'"
+#    install_amd_gpu_driver
+#else
+#    print_header "No AMD device found"
+#fi
+
 # NVIDIA GPU
 if [ "${nvidia_pci_address:-}X" != "X" ]; then
     print_header "Found NVIDIA device '${nvidia_gpu_name:?}'"

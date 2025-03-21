@@ -250,8 +250,8 @@ RUN \
     && \
     echo "**** Configure flatpak ****" \
         && chmod u-s /usr/bin/bwrap \
-        && flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo \
-        && su - default -c "flatpak remote-add --if-not-exists --user flathub https://flathub.org/repo/flathub.flatpakrepo" \
+        && flatpak remote-add --if-not-exists flathub https://mirror.sjtu.edu.cn/flathub \
+        && su - default -c "flatpak remote-add --if-not-exists --user flathub https://mirror.sjtu.edu.cn/flathub" \
     && \
     echo "**** Section cleanup ****" \
 	&& pacman -Scc --noconfirm \

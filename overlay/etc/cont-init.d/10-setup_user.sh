@@ -75,8 +75,8 @@ chown -R ${PUID}:${PGID} ${XDG_RUNTIME_DIR}
 chmod 700 ${XDG_RUNTIME_DIR}
 # Set the default background
 mkdir -p /etc/alternatives
-ln -sf /usr/share/backgrounds/steam.jpg /etc/alternatives/desktop-background
-chmod a+r /etc/alternatives/desktop-background
+#ln -sf /usr/share/backgrounds/steam.jpg /etc/alternatives/desktop-background
+#chmod a+r /etc/alternatives/desktop-background
 
 
 # Setup services log path

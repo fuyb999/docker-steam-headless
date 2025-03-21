@@ -1,13 +1,10 @@
-FROM debian:bookworm-slim
+FROM ubuntu:22.04
 LABEL maintainer="Josh.5 <jsunnex@gmail.com>"
 
 # Update package repos
 ARG DEBIAN_FRONTEND=noninteractive
-RUN \
-    echo "**** Update apt database ****" \
-        && sed -i '/^Components: main/ s/$/ contrib non-free/' /etc/apt/sources.list.d/debian.sources \
-    && \
-    echo
+
+RUN sed -i -E 's/(archive|security).ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
 
 # Update locale
 RUN \
@@ -17,7 +14,7 @@ RUN \
     echo "**** Install and configure locals ****" \
         && apt-get install -y --no-install-recommends \
             locales \
-        && echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen \
+        && echo 'zh_CN.UTF-8 UTF-8' > /etc/locale.gen \
         && locale-gen \
     && \
     echo "**** Section cleanup ****" \
@@ -30,9 +27,9 @@ RUN \
     && \
     echo
 ENV \
-    LANG=en_US.UTF-8 \
-    LANGUAGE=en_US:en \
-    LC_ALL=en_US.UTF-8
+    LANG=zh_CN.UTF-8 \
+    LANGUAGE=zh_CN:zh \
+    LC_ALL=zh_CN.UTF-8
 
 # Re-install certificates
 RUN \
@@ -112,8 +109,8 @@ ENV \
     USER="default" \
     USER_PASSWORD="password" \
     USER_HOME="/home/default" \
-    TZ="Pacific/Auckland" \
-    USER_LOCALES="en_US.UTF-8 UTF-8"
+    TZ="Asia/Shanghai" \
+    USER_LOCALES="zh_CN.UTF-8 UTF-8"
 RUN \
     echo "**** Configure default user '${USER}' ****" \
         && mkdir -p \
@@ -259,8 +256,8 @@ RUN \
         && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/x11vnc.desktop \
         && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/display-im6.q16.desktop \
         # These are named specifically for Debain
-        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/debian-xterm.desktop \
-        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/debian-uxterm.desktop \
+#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/debian-xterm.desktop \
+#        && sed -i '/[Desktop Entry]/a\NoDisplay=true' /usr/share/applications/debian-uxterm.desktop \
         # Force these apps to be "System" Apps rather than "Categories=System;Utility;Core;GTK;Filesystem;"
         && sed -i 's/^Categories=.*$/Categories=System;/' /usr/share/applications/xfce4-appfinder.desktop \
         && sed -i 's/^Categories=.*$/Categories=System;/' /usr/share/applications/thunar-bulk-rename.desktop \
@@ -465,7 +462,7 @@ RUN \
     echo
 
 # Install Sunshine
-COPY --from=lizardbyte/sunshine:v2025.122.141614-debian-bookworm /sunshine.deb /usr/src/sunshine.deb
+COPY --from=lizardbyte/sunshine:v2025.122.141614-ubuntu-22.04 /sunshine.deb /usr/src/sunshine.deb
 RUN \
     echo "**** Update apt database ****" \
         && apt-get update \
@@ -494,10 +491,12 @@ RUN \
         && dpkg --add-architecture i386 \
         && apt-get update \
     && \
+    echo "**** Install gamescope ****" \
+#      && wget -qO gamescope_3.12.5-2_amd64.deb https://github.com/akdor1154/gamescope-pkg/releases/download/v3.12.5-2/gamescope_3.12.5-2_amd64.deb \
+    && \
     echo "**** Install Steam ****" \
         && apt-get install -y --no-install-recommends \
             steam-installer \
-            gamescope \
         && ln -sf /usr/games/steam /usr/bin/steam \
     && \
     echo "**** Section cleanup ****" \
@@ -522,7 +521,6 @@ RUN \
     && \
     echo "**** Install dumb-udev ****" \
         && python3 -m pip install \
-            --break-system-packages \
             --pre \
             --upgrade \
             --no-cache-dir \
