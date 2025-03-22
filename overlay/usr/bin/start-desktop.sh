@@ -39,12 +39,14 @@ if [[ "${DESKTOP}" == "xfce4" ]] ;then
 
  # Install/Upgrade user apps
  if [[ ! -f /tmp/.desktop-apps-updated ]]; then
-     xterm -geometry 200x50+0+0 -ls -e /bin/bash -c "
-         source /usr/bin/install_firefox.sh;
-         source /usr/bin/install_protonup.sh;
-         sleep 1;
-     "
-     touch /tmp/.desktop-apps-updated
+   if [[ "${ENABLE_FLATPAK}" == "true" ]]; then
+       xterm -geometry 200x50+0+0 -ls -e /bin/bash -c "
+           source /usr/bin/install_firefox.sh;
+           source /usr/bin/install_protonup.sh;
+           sleep 1;
+       "
+       touch /tmp/.desktop-apps-updated
+   fi
  fi
 
  # Run the desktop environment

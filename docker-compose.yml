@@ -2,11 +2,12 @@
 version: "3.8"
 
 services:
-  steam-headless:
+  xfce4-headless:
     build:
       context: .
       dockerfile: Dockerfile-ubuntu-xfce4
     image: xfce4-headless:ubuntu
+    container_name: xfce4-headless
     restart: unless-stopped
     shm_size: ${SHM_SIZE}
     ipc: host # Could also be set to 'shareable'

@@ -231,17 +231,17 @@ function install_intel_gpu_driver {
 #fi
 
 # NVIDIA GPU
-if [ "${nvidia_pci_address:-}X" != "X" ]; then
-    print_header "Found NVIDIA device '${nvidia_gpu_name:?}'"
-    install_nvidia_driver
-    patch_nvidia_driver
-elif [ "${NVIDIA_DRIVER_VERSION:-}X" != "X" ]; then
-    export nvidia_host_driver_version="${NVIDIA_DRIVER_VERSION:?}"
-    print_header "Forcing install of NVIDIA driver version '${nvidia_host_driver_version:?}' because the 'NVIDIA_DRIVER_VERSION' variable is set."
-    install_nvidia_driver
-    patch_nvidia_driver
-else
-    print_header "No NVIDIA device found"
-fi
+#if [ "${nvidia_pci_address:-}X" != "X" ]; then
+#    print_header "Found NVIDIA device '${nvidia_gpu_name:?}'"
+#    install_nvidia_driver
+#    patch_nvidia_driver
+#elif [ "${NVIDIA_DRIVER_VERSION:-}X" != "X" ]; then
+#    export nvidia_host_driver_version="${NVIDIA_DRIVER_VERSION:?}"
+#    print_header "Forcing install of NVIDIA driver version '${nvidia_host_driver_version:?}' because the 'NVIDIA_DRIVER_VERSION' variable is set."
+#    install_nvidia_driver
+#    patch_nvidia_driver
+#else
+#    print_header "No NVIDIA device found"
+#fi
 
 echo -e "\e[34mDONE\e[0m"
