@@ -529,6 +529,24 @@ RUN \
     && \
     echo
 
+RUN \
+    echo "**** Update apt database ****" \
+        && apt-get update \
+    && \
+    echo "**** Install zh-hans language ****" \
+        && apt-get install -y \
+            language-pack-zh-hans fonts-ubuntu fonts-wqy-zenhei fonts-wqy-microhei tzdata \
+    && \
+    echo "**** Section cleanup ****" \
+        && apt-get clean autoclean -y \
+        && apt-get autoremove -y \
+        && rm -rf \
+            /var/lib/apt/lists/* \
+            /var/tmp/* \
+            /tmp/* \
+    && \
+    echo
+
 # Add FS overlay
 COPY overlay /
 
